@@ -6,6 +6,7 @@ from sklearn.preprocessing import MinMaxScaler
 epochs = 150    
 batch_size = 200
 classes = 10
+hidden_layers = 128
 split_rate = 0.2
 
 # Digits classification dataset https://keras.io/api/datasets/mnist/
@@ -32,23 +33,19 @@ y_test =  tf.keras.utils.to_categorical(y_test, classes)
 # Creating the model
 model = tf.keras.models.Sequential()
 
-# Adding the first and only layer
-# Softmax is the sigmoid of categories in simple words. Instead of a binary vector
-# it can be used with categories activating for each of them
-# This layer takes the input layer, creates a layer of 10 and gets the probability
-# of being in a category
-# In summary 784 - 10 ANN, each of the 10 kinda sigmoid
+# This time I will add hidden layers to see if it improves and how much
+model.add(keras.layers.Dense(hidden_layers,
+                             input_shape=(flat_size,)))
+model.add(keras.layers.Dense(hidden_layers,
+                             activation='relu'))
+model.add(keras.layers.Dense(hidden_layers,
+                             activation='relu'))
+
+# output layer
 model.add(keras.layers.Dense(classes,
-                             input_shape=(flat_size,),
                              activation='softmax'))
 
-# Compile, which just means, adding the super params
-# SGD = Stochastic Gradient Descent (every batch the weights are updated based
-# on this algorithm)
-# loss function or cost function, it is just how far we are from the "perfect"
-# outcome (we do not really want to be perfect though, we don't want to 
-# overfit) Normally 80% accuracy is good
-# accuracy, how much we hit right per category
+# Compile
 model.compile(optimizer='SGD',
               loss='categorical_crossentropy',
               metrics=['accuracy']) 
@@ -62,7 +59,7 @@ loss, accuracy = model.evaluate(X_test,y_test)
 print ("Accuracy: ", accuracy)
 print ("Loss: ", loss)
 
-# In my case, accuracy is around 91% with loss of 29%
-# One thing is categorizing well, and another thing is how perfect is the 
-# categorization, in this case loss measures the perfection
+# For this with three extra hidden layers we get better results so
+# we can say that our model is going in the right direction without overfitting
+# I get 97% of accuracy and 0.086 of loss which are very good numbers
 
